@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🌿 Calm Green To-do List</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Material Icons -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+    rel="stylesheet"
+  />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            sage: "#e6f2ea",
+            moss: "#cde5d7",
+            leaf: "#9fc5b8",
+            forest: "#5f8575",
+            deep: "#3f5f55",
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #e6f2ea, #cde5d7, #9fc5b8);
+      background-attachment: fixed;
+    }
+
+    ::selection {
+      background: #5f8575;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-6">
+
+  <div class="w-full max-w-5xl">
+
+    <!-- Header -->
+    <div class="text-center mb-10">
+      <h1 class="text-4xl font-extrabold text-deep mb-2 drop-shadow">
+        🌿 Calm To-do List
+      </h1>
+      <p class="text-forest italic">
+        Organize your day peacefully
+      </p>
+    </div>
+
+    <!-- Image Banner -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-12">
+      <img class="rounded-3xl shadow-md h-52 w-full object-cover"
+        src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6">
+      <img class="rounded-3xl shadow-md h-52 w-full object-cover"
+        src="https://images.unsplash.com/photo-1526045612212-70caf35c14df">
+      <img class="rounded-3xl shadow-md h-52 w-full object-cover"
+        src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee">
+    </div>
+
+    <!-- Main Card -->
+    <div class="bg-sage/80 backdrop-blur-xl border border-leaf rounded-3xl shadow-xl p-10">
+
+      <h2 class="text-2xl font-semibold text-deep mb-3">
+        Daily Planner 🍃
+      </h2>
+
+      <!-- Info Box -->
+      <div class="bg-moss/70 border border-leaf rounded-2xl p-4 mb-8">
+        <p class="text-deep text-sm">
+          ✍️ พิมพ์งานของคุณ พร้อมใส่แท็ก เช่น <b>#work #study</b>
+        </p>
+      </div>
+
+      <!-- Form -->
+      <form id="todo-form" class="flex flex-col md:flex-row gap-4 mb-8">
+        <input
+          type="text"
+          id="todo-input"
+          placeholder="Write task... #tag"
+          class="flex-1 border border-leaf rounded-2xl px-5 py-3
+                 bg-white/60 text-deep placeholder:text-forest
+                 focus:outline-none focus:ring-2 focus:ring-forest"
+          required
+        />
+
+        <button
+          type="submit"
+          class="bg-forest text-white px-6 py-3 rounded-2xl
+                 hover:bg-deep transition flex items-center gap-2 shadow"
+        >
+          <span class="material-symbols-outlined">add_task</span>
+          Add
+        </button>
+      </form>
+
+      <!-- Todo List -->
+      <ul
+        id="todo-list"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+      ></ul>
+
+      <!-- Empty State -->
+      <p
+        id="empty-state"
+        class="text-center text-forest/70 italic mt-6"
+      >
+        🌱 No tasks yet — start calmly
+      </p>
+
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    const form = document.getElementById("todo-form");
+    const input = document.getElementById("todo-input");
+    const list = document.getElementById("todo-list");
+    const emptyState = document.getElementById("empty-state");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const rawText = input.value.trim();
+      if (!rawText) return;
+
+      emptyState.style.display = "none";
+
+      // Extract tags
+      const tags = rawText.match(/#\w+/g) || [];
+      const taskText = rawText.replace(/#\w+/g, "").trim();
+
+      const tagHTML = tags.map(tag => `
+        <span class="bg-leaf/50 text-deep text-xs px-3 py-1 rounded-full">
+          ${tag}
+        </span>
+      `).join("");
+
+      const li = document.createElement("li");
+      li.className = `
+        bg-moss/70 border border-leaf
+        rounded-2xl p-5 shadow transition
+      `;
+
+      li.innerHTML = `
+        <p class="text-deep font-medium mb-3">${taskText}</p>
+
+        <div class="flex flex-wrap gap-2 mb-4">
+          ${tagHTML}
+        </div>
+
+        <div class="flex gap-3">
+          <button class="done flex-1 bg-green-100 text-green-800 py-2 rounded-xl">
+            ✔ Done
+          </button>
+          <button class="delete flex-1 bg-red-100 text-red-700 py-2 rounded-xl">
+            🗑 Delete
+          </button>
+        </div>
+      `;
+
+      list.appendChild(li);
+      input.value = "";
+    });
+
+    list.addEventListener("click", function (e) {
+      const li = e.target.closest("li");
+      if (!li) return;
+
+      if (e.target.classList.contains("delete")) {
+        li.remove();
+        if (list.children.length === 0) {
+          emptyState.style.display = "block";
+        }
+      }
+
+      if (e.target.classList.contains("done")) {
+        li.classList.toggle("opacity-50");
+        li.classList.toggle("line-through");
+      }
+    });
+  </script>
+
+</body>
+</html>
